@@ -3,9 +3,13 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+float rof = 0;
+long rof_t0 = 0;
+long rof_tprev = 0;
+int rof_count = 0;
 float avg_fps = 0;
 float shot_num = 0;
-int disp_rot = 2;
+int disp_rot = 0;
 long g1_time = 0;
 long g2_time = 0;
 long g1_slow_time = 0;
@@ -46,7 +50,7 @@ void setup() {
     for(;;); // Don't proceed, loop forever
   }
   display.display();
-  delay(1000); // Pause for 2 seconds
+  delay(3000); // Pause for 2 seconds
   display.clearDisplay();
   display.setRotation(0);
   display.setTextSize(1);             // Normal 1:1 pixel scale
@@ -114,7 +118,21 @@ void loop() {
         fpstr = String(int(fps));
         avg_fps = (avg_fps*shot_num+fps)/(shot_num+1);
         shot_num++;
+        if((g2_time-rof_tprev)>2000000){
+          Serial.println("restarting count");
+          rof_t0 = g2_time;
+          rof_tprev = g2_time;
+          rof_count = 0;
+          rof = 0.0;
+        }
+        else{
+          Serial.println("continuing count");
+          rof_tprev = g2_time;
+          rof_count++;
+          rof = float(rof_count)*1000000/float(g2_time-rof_t0);
+        }
       }
+      
       Serial.println(fps);
       Serial.println(g2_time-g1_time);
       g1_persist = 0;
@@ -154,12 +172,16 @@ void display_vert(){
   display.print(fpstr);
   display.setTextSize(1);
   display.setCursor(10,50);
-  display.print("SHOT#: ");
+  display.print("SHT#: ");
   display.print(int(shot_num));
   display.setCursor(10,60);
   display.print("AVGF: ");
   display.print(int(avg_fps));
-  
+  display.setCursor(10,70);
+  display.print("RPS: ");
+  char buffer[5];
+  String srof = dtostrf(rof, 2, 1, buffer);
+  display.print(srof);
   if(g1_trip){
     display.setCursor(15,105);
     display.print("GATE 1");
@@ -175,22 +197,27 @@ void display_horz(){
   display.setRotation(0);
   display.clearDisplay();
   display.setTextSize(2);
-  display.setCursor(12,20);
+  display.setCursor(12,12);
   display.print("FPS: ");
   display.print(fpstr);
   display.setTextSize(1);
-  display.setCursor(60,40);
+  display.setCursor(54,45);
   display.print("SHOT#: ");
   display.print(int(shot_num));
-  display.setCursor(60,50);
+  display.setCursor(60,35);
   display.print("AVGF: ");
   display.print(int(avg_fps));
+  display.setCursor(66,55);
+  display.print("RPS: ");
+  char buffer[5];
+  String srof = dtostrf(rof, 2, 1, buffer);
+  display.print(srof);
   if(g1_trip){
-    display.setCursor(5,40);
+    display.setCursor(2,40);
     display.print("GATE 1");
   }
   if(g2_trip){
-    display.setCursor(5,50);
+    display.setCursor(2,53);
     display.print("GATE 2");
   }
   display.display();
