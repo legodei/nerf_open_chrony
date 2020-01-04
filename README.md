@@ -1,54 +1,31 @@
-# Adafruit_SSD1306 [![Build Status](https://travis-ci.org/adafruit/Adafruit_SSD1306.svg?branch=master)](https://travis-ci.org/adafruit/Adafruit_SSD1306)
+# Adafruit GFX Library # [![Build Status](https://travis-ci.org/adafruit/Adafruit-GFX-Library.svg?branch=master)](https://travis-ci.org/adafruit/Adafruit-GFX-Library)
 
-This is a library for our Monochrome OLEDs based on SSD1306 drivers
+This is the core graphics library for all our displays, providing a common set of graphics primitives (points, lines, circles, etc.). It needs to be paired with a hardware-specific library for each display device we carry (to handle the lower-level functions).
 
-  Pick one up today in the adafruit shop!
-  ------> http://www.adafruit.com/category/63_98
+Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!
 
-These displays use I2C or SPI to communicate, 2 to 5 pins are required to interface.
+Written by Limor Fried/Ladyada for Adafruit Industries.
+BSD license, check license.txt for more information.
+All text above must be included in any redistribution.
 
-Adafruit invests time and resources providing this open source code,
-please support Adafruit and open-source hardware by purchasing
-products from Adafruit!
+Recent Arduino IDE releases include the Library Manager for easy installation. Otherwise, to download, click the DOWNLOAD ZIP button, uncompress and rename the uncompressed folder Adafruit_GFX. Confirm that the Adafruit_GFX folder contains Adafruit_GFX.cpp and Adafruit_GFX.h. Place the Adafruit_GFX library folder your ArduinoSketchFolder/Libraries/ folder. You may need to create the Libraries subfolder if its your first library. Restart the IDE.
 
-Written by Limor Fried/Ladyada for Adafruit Industries, with contributions from the open source community. Scrolling code contributed by Michael Gregg. Dynamic buffer allocation based on work by Andrew Canaday.
-BSD license, check license.txt for more information. All text above must be included in any redistribution
+# Useful Resources
 
-Preferred installation method is to use the Arduino IDE Library Manager. To download the source from Github instead, click "Clone or download" above, then "Download ZIP." After uncompressing, rename the resulting folder Adafruit_SSD1306. Check that the Adafruit_SSD1306 folder contains Adafruit_SSD1306.cpp and Adafruit_SSD1306.h.
+- Image2Code: This is a handy Java GUI utility to convert a BMP file into the array code necessary to display the image with the drawBitmap function. Check out the code at ehubin's GitHub repository: https://github.com/ehubin/Adafruit-GFX-Library/tree/master/Img2Code
 
-You will also have to install the **Adafruit GFX library** which provides graphics primitves such as lines, circles, text, etc. This also can be found in the Arduino Library Manager, or you can get the source from https://github.com/adafruit/Adafruit-GFX-Library
+- drawXBitmap function: You can use the GIMP photo editor to save a .xbm file and use the array saved in the file to draw a bitmap with the drawXBitmap function. See the pull request here for more details: https://github.com/adafruit/Adafruit-GFX-Library/pull/31
 
-## Changes
+- 'Fonts' folder contains bitmap fonts for use with recent (1.1 and later) Adafruit_GFX. To use a font in your Arduino sketch, \#include the corresponding .h file and pass address of GFXfont struct to setFont(). Pass NULL to revert to 'classic' fixed-space bitmap font.
 
-Version 1.2 (November 2018) introduces some significant changes:
+- 'fontconvert' folder contains a command-line tool for converting TTF fonts to Adafruit_GFX header format.
 
-  * Display dimensions are now specified in the constructor...you no longer need to edit the .h file for different screens (though old sketches can continue to work that way).
-  * SPI transactions are used and SPI bitrate can be specified (both require Arduino 1.6 or later).
-  * SPI and Wire (I2C) interfaces other than the defaults are supported.
+---
 
-<!-- START COMPATIBILITY TABLE -->
+### Roadmap
 
-## Compatibility
+The PRIME DIRECTIVE is to maintain backward compatibility with existing Arduino sketches -- many are hosted elsewhere and don't track changes here, some are in print and can never be changed! This "little" library has grown organically over time and sometimes we paint ourselves into a design corner and just have to live with it or add ungainly workarounds.
 
-MCU         |Tested Works|Doesn't Work|Not Tested|Notes
-------------|:----------:|:----------:|:--------:|-----
-Atmega328   |      X     |            |          |
-Atmega32u4  |      X     |            |          |
-Atmega2560  |      X     |            |          |
-ESP8266     |      X     |            |          | Change OLED_RESET to different pin if using default I2C pins D4/D5.
-ESP32       |      X     |            |          |
-ATSAM3X8E   |      X     |            |          |
-ATSAM21D    |      X     |            |          |
-Intel Curie |      X     |            |          |
-WICED       |      X     |            |          | No hardware SPI - bitbang only
-ATtiny85    |            |      X     |          |
+Highly unlikely to merge any changes for additional or incompatible font formats (see Prime Directive above). There are already two formats and the code is quite bloaty there as it is (this also creates liabilities for tools and documentation). If you *must* have a more sophisticated font format, consider creating a fork with the features required for your project. For similar reasons, also unlikely to add any more bitmap formats, it's getting messy.
 
-  * ATmega328 : Arduino UNO, Adafruit Pro Trinket, Adafruit Metro 328, Adafruit Metro Mini
-  * ATmega32u4 : Arduino Leonardo, Arduino Micro, Arduino Yun, Teensy 2.0, Adafruit Flora, Bluefruit Micro
-  * ATmega2560 : Arduino Mega
-  * ESP8266 : Adafruit Huzzah
-  * ATSAM3X8E : Arduino Due
-  * ATSAM21D : Arduino Zero, M0 Pro, Adafruit Metro Express, Feather M0
-  * ATtiny85 : Adafruit Gemma, Arduino Gemma, Adafruit Trinket
-
-<!-- END COMPATIBILITY TABLE -->
+Please don't reformat code for the sake of reformatting code. The resulting large "visual diff" makes it impossible to untangle actual bug fixes from merely rearranged lines.
